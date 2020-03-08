@@ -14,6 +14,7 @@ Ethernet
 Multitasking Enabled
 
 Hardware not supported
+All USB inputs
 Audio
 Printers
 Bluetooth
