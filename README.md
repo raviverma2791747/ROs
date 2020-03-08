@@ -5,13 +5,14 @@ Source codes from "Write your own Operating System" video-series on YouTube
 A bare bones operating system
 Works on x86 architecture.
 
+Multitasking Enabled
+TCP/IPv4 supported
+
 Hardware supported
 PS/2 KeyBoard
 VGA Display
 PS/2 Mouse
 Ethernet
-
-Multitasking Enabled
 
 Hardware not supported
 All USB inputs
