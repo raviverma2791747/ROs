@@ -12,6 +12,7 @@
 #include <drivers/ata.h>
 #include <gui/desktop.h>
 #include <gui/window.h>
+#include <gui/image.h>
 #include <multitasking.h>
 
 #include <drivers/amd_am79c973.h>
@@ -23,7 +24,10 @@
 #include <net/tcp.h>
 
 
-// #define GRAPHICSMODE
+#define GRAPHICSMODE
+#define SYS_EXIT 0
+#define SYS_PAUSE 1
+//#define  TERMINAL
 
 
 using namespace myos;
@@ -33,7 +37,7 @@ using namespace myos::hardwarecommunication;
 using namespace myos::gui;
 using namespace myos::net;
 
-
+char ch = '\0';
 
 void printf(char* str)
 {
@@ -107,6 +111,7 @@ public:
         printf(foo);
     }
 };
+
 
 class MouseToConsole : public MouseEventHandler
 {
@@ -214,9 +219,47 @@ void taskB()
 }
 
 
+/*
+CONSOLE 
+*/
+#ifdef  TERMINAL
+void scanf(char temp)
+{
+	ch = temp;
+}
+char oscanf()
+{
+	return ch;
+}
+
+int scanf()
+{
+	int ch_n = ch - '0';
+	//if()
+	return ch_n;
+}
 
 
-
+void  terminal()
+{
+	printf("h");
+	int choice =  0;
+	//while(choice != 0)
+	{
+		printf("==========================================================================\n");
+		printf("                        TERMINAL\n");
+		printf("==========================================================================\n");		
+		printf("[1]\n");
+		printf("[0]Exit\n");
+		choice = scanf();
+		if(choice  ==  0)
+		{
+			printf("ok");
+		}
+	}
+}
+//end
+#endif
 
 typedef void (*constructor)();
 extern "C" constructor start_ctors;
@@ -231,8 +274,8 @@ extern "C" void callConstructors()
 
 extern "C" void kernelMain(const void* multiboot_structure, uint32_t /*multiboot_magic*/)
 {
-    printf("Hello World! --- http://www.AlgorithMan.de\n");
-
+	
+   // printf("Hello World! --- http://www.AlgorithMan.de\n");
     GlobalDescriptorTable gdt;
     
     
@@ -266,33 +309,36 @@ extern "C" void kernelMain(const void* multiboot_structure, uint32_t /*multiboot
     SyscallHandler syscalls(&interrupts, 0x80);
     
     printf("Initializing Hardware, Stage 1\n");
-    
+ 
     #ifdef GRAPHICSMODE
         Desktop desktop(320,200, 0x00,0x00,0xA8);
     #endif
+
     
     DriverManager drvManager;
-    
+        
         #ifdef GRAPHICSMODE
             KeyboardDriver keyboard(&interrupts, &desktop);
         #else
             PrintfKeyboardEventHandler kbhandler;
             KeyboardDriver keyboard(&interrupts, &kbhandler);
         #endif
+	
         drvManager.AddDriver(&keyboard);
         
-    
+     
         #ifdef GRAPHICSMODE
             MouseDriver mouse(&interrupts, &desktop);
         #else
             MouseToConsole mousehandler;
             MouseDriver mouse(&interrupts, &mousehandler);
         #endif
+	
         drvManager.AddDriver(&mouse);
         
         PeripheralComponentInterconnectController PCIController;
         PCIController.SelectDrivers(&drvManager, &interrupts);
-
+   
         #ifdef GRAPHICSMODE
             VideoGraphicsArray vga;
         #endif
@@ -302,13 +348,39 @@ extern "C" void kernelMain(const void* multiboot_structure, uint32_t /*multiboot
         
     printf("Initializing Hardware, Stage 3\n");
 
+   
+	
     #ifdef GRAPHICSMODE
+	 /* Add graphic widgets here */
         vga.SetMode(320,200,8);
-        Window win1(&desktop, 10,10,20,20, 0xA8,0x00,0x00);
-        desktop.AddChild(&win1);
-        Window win2(&desktop, 40,15,30,30, 0x00,0xA8,0x00);
-        desktop.AddChild(&win2);
+        //Window win1(&desktop, 10,10,20,20, 0xA8,0x00,0x00);
+       // desktop.AddChild(&win1);
+        //Window win2(&desktop, 40,15,30,30, 0x00,0xA8,0x00);
+      //  desktop.AddChild(&win2);
+		 
+		 uint8_t img_src[10000];
+	for(int i=0; i<10000; i++)
+    {
+		if(i%2 == 0 && i%5 !=0)
+		{
+			img_src[i] = 0x02;
+		}
+		else if(i%3 == 0 && i%5 !=0)
+		{
+			img_src[i] = 0x04;
+		}
+		else
+		{
+			img_src[i] = 0x3F;
+		}
+		
+		//img_src[i] = 0x04;
+    }
+
+		Image img(&desktop,40,45,100,100, 0x00,0x00,0x00,img_src);
+        desktop.AddChild(&img);
     #endif
+
 
 
     /*
@@ -373,9 +445,14 @@ extern "C" void kernelMain(const void* multiboot_structure, uint32_t /*multiboot
     
     interrupts.Activate();
 
-    printf("\n\n\n\n");
+
+    printf("ok\n\n\n\n");
     
-    arp.BroadcastMACAddress(gip_be);
+	#ifdef TERMINAL
+     terminal();
+	#endif
+	
+    //arp.BroadcastMACAddress(gip_be);
     
     
     PrintfTCPHandler tcphandler;
@@ -393,6 +470,8 @@ extern "C" void kernelMain(const void* multiboot_structure, uint32_t /*multiboot
     
     //UserDatagramProtocolSocket* udpsocket = udp.Listen(1234);
     //udp.Bind(udpsocket, &udphandler);
+	
+	
 
     
     while(1)
@@ -400,5 +479,7 @@ extern "C" void kernelMain(const void* multiboot_structure, uint32_t /*multiboot
         #ifdef GRAPHICSMODE
             desktop.Draw(&vga);
         #endif
+		#ifdef TERMINAL
+		#endif
     }
 }
