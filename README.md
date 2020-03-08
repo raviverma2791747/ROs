@@ -6,7 +6,7 @@ A bare bones operating system
 Works on x86 architecture.
 
 Hardware supported
-PS/2 KeyBoard
+PS/2 KeyBoard\n
 VGA Display
 PS/2 Mouse
 
