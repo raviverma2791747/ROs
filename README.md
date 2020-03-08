@@ -6,7 +6,15 @@ A bare bones operating system
 Works on x86 architecture.
 
 Hardware supported
-PS/2 KeyBoard\n
+PS/2 KeyBoard
 VGA Display
 PS/2 Mouse
+Ethernet
 
+Multitasking Enabled
+
+Hardware not supported
+Audio
+Printers
+Bluetooth
+Wifi
