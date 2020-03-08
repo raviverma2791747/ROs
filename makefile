@@ -23,6 +23,7 @@ objects = obj/loader.o \
           obj/drivers/ata.o \
           obj/gui/widget.o \
           obj/gui/window.o \
+		   obj/gui/image.o \
           obj/gui/desktop.o \
           obj/net/etherframe.o \
           obj/net/arp.o \
