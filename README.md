@@ -1,7 +1,7 @@
 # ROs (Rusty Operating System)
 based on wyoos(write your own operating system)</br>
 Source codes from "Write your own Operating System" video-series on YouTube</br>
-![](https://github.com/raviverma2791747/ROs/blob/master/assets/logo.ppm)
+![](https://github.com/raviverma2791747/ROs/blob/master/assets/logo.png)
 
 A bare bones operating system</br>
 Works on x86 architecture.</br>
