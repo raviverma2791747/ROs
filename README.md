@@ -5,7 +5,7 @@ Source codes from "Write your own Operating System" video-series on YouTube
 A bare bones operating system
 Works on x86 architecture.
 
-Working On Reading .PPM format images.
+Working On Reading FAT32 implementation.
 Multitasking Enabled
 TCP/IPv4 supported
 
