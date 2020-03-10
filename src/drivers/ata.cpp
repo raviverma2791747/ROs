@@ -116,6 +116,44 @@ void AdvancedTechnologyAttachment::Read28(common::uint32_t sectorNum, int count)
         dataPort.Read();
 }
 
+void AdvancedTechnologyAttachment::Read28(uint32_t sectorNum, uint8_t* sector, int count)
+{
+  if(sectorNum > 0x0FFFFFFF)
+        return;
+    
+    devicePort.Write( (master ? 0xE0 : 0xF0) | ((sectorNum & 0x0F000000) >> 24) );
+    errorPort.Write(0);
+    sectorCountPort.Write(1);     // read one sector
+    lbaLowPort.Write(  sectorNum & 0x000000FF );
+    lbaMidPort.Write( (sectorNum & 0x0000FF00) >> 8);
+    lbaHiPort.Write( (sectorNum & 0x00FF0000) >> 16 );
+    commandPort.Write(0x20);     // Send write command
+    
+    // Wait until device is ready
+    uint8_t status = commandPort.Read();
+    while(((status & 0x80) == 0x80)
+       && ((status & 0x01) != 0x01))
+        status = commandPort.Read();
+        
+    if(status & 0x01)
+    {
+        printf("ERROR");
+        return;
+    }
+    
+   
+    int ctr=0;
+    for(int i=0; i < 256; i++)
+    {
+ uint16_t wdata = dataPort.Read();
+ uint16_t swap = (wdata << 8) | ((wdata >> 8) & 0x00ff); // swap endianess
+ sector[ctr++] = (swap >> 8) & 0xFF;
+ sector[ctr++] = swap & 0xFF;
+    }
+    return;
+
+}
+
 void AdvancedTechnologyAttachment::Write28(common::uint32_t sectorNum, common::uint8_t* data, common::uint32_t count)
 {
     if(sectorNum > 0x0FFFFFFF)
