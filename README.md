@@ -30,3 +30,12 @@ Audio</br>
 Printers</br>
 Bluetooth</br>
 Wifi</br>
+
+Developement Environment</br>
+Linux Mint</br>
+Install</br>
+1.GNU Gcc C++ compiler</br>
+2.Biuntil Linker </br>
+3.Gas assembler</br>
+4.Virtual Box</br>
+
