@@ -5,6 +5,7 @@ Source codes from "Write your own Operating System" video-series on YouTube</br>
 
 A bare bones operating system</br>
 Works on x86 architecture.</br>
+Broken POSIX compliance</br>
 
 Working On FAT32 File System implementation.</br>
  
